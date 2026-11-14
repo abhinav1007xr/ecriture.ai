@@ -10,7 +10,7 @@ BAUD         = 921600
 OUTPUT_DIR   = os.path.join(os.path.dirname(os.path.abspath(__file__)), "captures")
 SHOW_PREVIEW = True
 MAX_LEN      = 500000
-FAIL_LIMIT   = 5          # consecutive failures before resetting the board
+FAIL_LIMIT   = 5         
 
 
 def find_esp32_port():
@@ -26,7 +26,6 @@ def find_esp32_port():
         if any(marker in description or marker in hardware_id for marker in markers):
             return p.device
 
-    # Some Linux USB-UART adapters expose only a generic description.
     linux_ports = [
         p.device for p in ports
         if p.device.startswith(("/dev/ttyUSB", "/dev/ttyACM"))
@@ -299,7 +298,6 @@ def stitch_images():
             f"({pano.shape[1]}x{pano.shape[0]})"
         )
 
-        # Delete captured images only after successful stitching
         for f in files:
             os.remove(f)
 

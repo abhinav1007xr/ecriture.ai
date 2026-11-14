@@ -3,7 +3,6 @@ import numpy as np
 import glob
 import os
 
-# ====== CONFIG ======
 CAPTURES_DIR = "./captures"
 OUTPUT_PANO  = "./panorama.jpg"
 MIN_MATCHES  = 15
@@ -31,7 +30,6 @@ def get_homography_shift(img1, img2):
     if H is None:
         return None, len(matches)
 
-    # Extract the shift values
     dx = H[0, 2]
     dy = H[1, 2]
     
@@ -41,7 +39,6 @@ def get_homography_shift(img1, img2):
     return dx, len(matches)
 
 def build_panorama():
-    # Delete old panorama so you don't look at a cached image
     if os.path.exists(OUTPUT_PANO):
         os.remove(OUTPUT_PANO)
 
@@ -84,19 +81,13 @@ def build_panorama():
         if abs(dx_int) < 5:
             skipped += 1
             continue
-
-        # --- FORCED LEFT-TO-RIGHT LOGIC ---
-        # Since moving L->R adds new content on the right,
-        # we always append to the right side of our result.
         
         overlap = abs(dx_int)
         
-        # If the camera moved further than the frame width, there is no overlap
         if overlap >= curr.shape[1]:
             result = cv2.hconcat([result, curr])
             print(f"  frame {i+1:3d}: dx={dx_int:3d} → NO OVERLAP, appended full frame")
         else:
-            # Chop off the left side (the overlap) and append the new right side
             new_right_part = curr[:, overlap:]
             result = cv2.hconcat([result, new_right_part])
             print(f"  frame {i+1:3d}: dx={dx_int:3d} → appended {new_right_part.shape[1]} new cols")
